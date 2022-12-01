@@ -1,0 +1,19 @@
+
+.mr-3 {
+    margin-right: 3px;
+}
+
+.float-right {
+    float: right;
+}
+
+.container {
+    margin: 5px 10px 5px 10px;
+}
+
+#addButton {
+    position: fixed;
+    bottom: -10px;
+    right: 10px;
+    padding:30px 20px;
+}

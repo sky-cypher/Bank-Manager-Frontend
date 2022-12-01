@@ -1,0 +1,281 @@
+
+<div *ngIf="accounts?.length == 0" 
+    class="alert alert-primary" role="alert">
+    <h4 class="alert-heading">No Accounts!</h4>
+    <p>No accounts were found.</p>
+</div>
+
+<div class="container">
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Account ID</th>
+        <th scope="col">Customer ID</th>
+        <th scope="col">Balance</th>
+        <th scope="col">Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of accounts" @fadeAnimation>
+        <th scope="row">{{a.accountID}}</th>
+        <td>{{a.customerID}}</td>
+        <td>
+            <fa-icon [icon]="faRupee">
+            </fa-icon>
+            {{a.balance}}
+        </td>
+        <td>
+            <div class="btn-group">
+            <button type="button" class="btn btn-success mr-3"
+            (click)="open(depositModel,a)">
+                Deposit
+            </button>
+
+            <button type="button" class="btn btn-danger mr-3"
+            (click)="open(withdrawModel,a)">
+                Withdraw
+            </button>
+
+            <button type="button" class="btn btn-warning mr-3"
+                (click)="open(transferModel,a)">
+                Transfer 
+            </button>
+            
+        </div>
+        <button class="btn btn-secondary float-right tooltips"
+                (click)="open(deleteModel,a)">
+                        <fa-icon [icon]="faTimes">
+                        </fa-icon>
+            </button>
+        </td>
+      </tr>
+    </tbody>
+</table>
+</div>
+
+<div id="addButton">
+<button
+    class="btn btn-lg btn-primary" 
+    (click)="open(addModel)">
+    Add Account
+</button>
+</div>
+
+
+<ng-template #addModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Add account
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="addForm">
+            <div class="mb-3 form-group">
+                <label for="customer">Customer ID</label>
+                <input 
+                    type="text"
+                    placeholder="ID"
+                    class="form-control"
+                    list="customers"
+                    formControlName="id"
+                    >
+                    <datalist id="customers">
+                        <option *ngFor="let c of customers" 
+                        value={{c.customerID}}>
+                        ID: {{c.customerID}} 
+                        Name: {{c.name}}
+                        </option>
+                    </datalist>
+            </div>
+
+            <div class="mb-3 form-group">
+                <label for="balance">Balance</label>
+                    <input 
+                        type="text"
+                        class="form-control"
+                        placeholder="0"
+                        formControlName="balance"
+                        [defaultValue]=0
+                        >
+            </div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-dark" 
+            [disabled]="addForm.invalid"
+            (click)="modal.close(addForm)">Save</button>
+	</div>
+</ng-template>
+
+<ng-template #deleteModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Delete Account
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+        <div class="mb-3">
+        <p class="text-center">Are you sure you want to delete account:
+            <br> <b>{{account!.accountID}} </b> </p>
+        </div>
+        <hr>
+        <div class="mb-3">
+        <p class="text-center">To confirm enter balance:
+            <br><b>{{account!.balance}}</b></p>
+        </div>
+        <hr>
+		<form #deleteForm="ngForm">
+            <div class="mb-3">
+                <label for="id">Balance</label>
+                <input 
+                    type="text"
+                    name="id"
+                    class="form-control"
+                    ngModel
+                    [pattern]="account!.balance.toString()"
+                    required
+                    >
+            </div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-danger" 
+            [disabled]="deleteForm.invalid"
+            (click)="deleteAccount(account!)">Delete</button>
+	</div>
+</ng-template>
+
+<ng-template #transferModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Transaction
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="transferForm">
+            <div class="mb-3 form-group">
+                <label for="customer">To Account</label>
+                <input 
+                    type="text"
+                    placeholder="ID"
+                    class="form-control"
+                    list="accounts"
+                    formControlName="id"
+                    >
+                    <datalist id="accounts">
+                        <ng-container *ngFor="let a of accounts" >
+                        <option value={{a.accountID}}
+                        *ngIf="a.accountID != account?.accountID" >
+                            Owner: {{getCustomerNameByID(a.customerID)}}
+                            ID: {{a.accountID}} 
+                        </option>
+                    </ng-container>
+                    </datalist>
+            </div>
+
+            <div class="mb-3 form-group">
+                <label for="amount">Amount</label>
+                    <input 
+                        type="text"
+                        class="form-control"
+                        placeholder="100"
+                        required
+                        formControlName="amount"
+                        >
+            </div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-warning" 
+            [disabled]="transferForm.invalid"
+            (click)="transfer(transferForm.value)">Transfer</button>
+	</div>
+</ng-template>
+
+<ng-template #depositModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Deposit
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="depositForm">
+            <div class="mb-3 form-group">
+                <label for="amount">Amount</label>
+                    <input 
+                        type="text"
+                        class="form-control"
+                        placeholder="100"
+                        required
+                        formControlName="amount"
+                        >
+            </div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-success" 
+            [disabled]="depositForm.invalid"
+            (click)="deposit(depositForm.value)">Deposit</button>
+	</div>
+</ng-template>
+
+<ng-template #withdrawModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Deposit
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="withdrawForm">
+            <div class="mb-3 form-group">
+                <label for="amount">Amount</label>
+                    <input 
+                        type="text"
+                        class="form-control"
+                        placeholder="100"
+                        required
+                        formControlName="amount"
+                        >
+            </div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-danger" 
+            [disabled]="withdrawForm.invalid"
+            (click)="withdraw(withdrawForm.value)">Withdraw</button>
+	</div>
+</ng-template>

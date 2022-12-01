@@ -1,0 +1,48 @@
+<div *ngIf="transactions?.length == 0" 
+    class="alert alert-primary" role="alert">
+    <h4 class="alert-heading">No Transactions!</h4>
+    <p>No transactions were found.</p>
+</div>
+
+<div class="container">
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Transaction ID</th>
+        <th scope="col">Account From ID</th>
+        <th scope="col">Account To ID</th>
+        <th scope="col">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of transactions" @fadeAnimation>
+        <th scope="row">{{t.transactionID}}</th>
+        <td>
+          <p *ngIf="t.accountFromID; else deposit" 
+            class="text-primary">
+            {{t.accountFromID}}
+          </p>
+          <ng-template #deposit>
+            <p class="text-success">Deposit</p>
+           </ng-template>
+        </td>
+        <td>
+          <p *ngIf="t.accountToID; else withdraw" 
+            class="text-primary">
+            {{t.accountToID}}
+          </p>
+          <ng-template #withdraw>
+            <p class="text-danger">Withdraw</p>
+           </ng-template>
+        </td>
+        <td>
+            <p class="text-dark">
+              <fa-icon [icon]="faRupee">
+              </fa-icon>
+              {{t.amount}}
+            </p>
+        </td>
+      </tr>
+    </tbody>
+</table>
+</div>

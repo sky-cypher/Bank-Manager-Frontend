@@ -1,0 +1,289 @@
+<div *ngIf="customers?.length == 0" 
+    class="alert alert-primary" role="alert">
+    <h4 class="alert-heading">No Customers!</h4>
+    <p>No customers were found.</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div *ngFor="let customer of customers" 
+            class="col-md-6 col-xl-3" @fadeAnimation>
+            <div class="card m-b-30">
+                <div class="card-body row">
+                    <div class="col-6">
+                        <img src="assets/user-icon-640.png"
+                        alt="profile image" 
+                        class="img-fluid rounded-circle w-100">
+                    </div>
+                    <div class="col-6 card-title align-self-center mb-0">
+                        <h5>{{customer.name}}</h5>
+                        <p class="m-0">ID: {{customer.customerID}}</p>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Email : 
+                        <fa-icon class="float-right" 
+                         [icon]="faEnvelope">
+                        </fa-icon>
+                        {{customer.email}}
+                    </li>
+                    <li class="list-group-item">
+                        Phone : {{customer.phone}}
+                        <fa-icon class="float-right" 
+                        [icon]="faPhone">
+                        </fa-icon>
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <div class="float-right btn-group btn-group-sm">
+                        <button class="btn btn-primary tooltips"
+                        (click)="open(updateModel,customer)">
+                            <fa-icon [icon]="faPencil">
+                            </fa-icon>
+                        </button>
+                        <button class="btn btn-secondary tooltips"
+                        (click)="open(deleteModel,customer)">
+                                <fa-icon [icon]="faTimes">
+                                </fa-icon>
+                        </button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addButton">
+<button
+    class="btn btn-lg btn-primary" 
+    (click)="open(addModel)">
+    Add Customer
+</button>
+</div>
+
+
+<ng-template #addModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Add customer
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form #addForm="ngForm">
+            <div class="mb-3">
+                <label for="name">Name</label>
+                <input 
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    class="form-control"
+                    ngModel
+                    minlength="3"
+                    required
+                    >
+            </div>
+
+            <div class="mb-3">
+                <label for="phone">Mobile Number</label>
+                    <input 
+                        type="text"
+                        name="phone"
+                        placeholder="0000000000"
+                        class="form-control"
+                        minlength="10"
+                        maxlength="10"
+                        [pattern]="'^[0-9]*$'"
+                        ngModel
+                        required
+                        >
+            </div>
+
+            <div class="mb-3">
+            <label for="email">Email</label>
+                <input 
+                    type="text"
+                    name="email"
+                    placeholder="somebody@example.com"
+                    class="form-control"
+                    ngModel
+                    [email]="true"
+                    required
+                    >
+            </div>
+
+			<div class="mb-3">
+				<label for="dateOfBirth">Date of birth</label>
+				<div class="input-group">
+					<input
+						id="dateOfBirth"
+						class="form-control"
+						placeholder="yyyy-mm-dd"
+						name="dob"
+						ngbDatepicker
+						#dp="ngbDatepicker"
+                        ngModel
+                        required
+					/>
+                    <button type="button" 
+                    class="btn btn-secondary bi bi-calendar" 
+                    (click)="dp.toggle()"></button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-dark" 
+            [disabled]="addForm.invalid"
+            (click)="modal.close(addForm.value)">Save</button>
+	</div>
+</ng-template>
+
+<ng-template #updateModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Update Customer
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+		<form #updateForm="ngForm">
+            <div class="mb-3">
+                <label for="id">Customer ID</label>
+                <input 
+                    type="text"
+                    name="id"
+                    placeholder="Name"
+                    class="form-control"
+                    minlength="3"
+                    required
+                    [(ngModel)]=customer!.customerID
+                    disabled
+                    >
+            </div>
+
+            <div class="mb-3">
+                <label for="name">Name</label>
+                <input 
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    class="form-control"
+                    minlength="3"
+                    [(ngModel)]=customer!.name
+                    required
+                    >
+            </div>
+
+            <div class="mb-3">
+                <label for="phone">Mobile Number</label>
+                    <input 
+                        type="text"
+                        name="phone"
+                        placeholder="0000000000"
+                        class="form-control"
+                        minlength="10"
+                        maxlength="10"
+                        [pattern]="'^[0-9]*$'"
+                        [(ngModel)]=customer!.phone
+                        required
+                        >
+            </div>
+
+            <div class="mb-3">
+            <label for="email">Email</label>
+                <input 
+                    type="text"
+                    name="email"
+                    placeholder="somebody@example.com"
+                    class="form-control"
+                    [(ngModel)]=customer!.email
+                    [email]="true"
+                    required
+                    >
+            </div>
+
+			<div class="mb-3">
+				<label for="dateOfBirth">Date of birth</label>
+				<div class="input-group">
+					<input
+						id="dateOfBirth"
+						class="form-control"
+						placeholder="yyyy-mm-dd"
+						name="dob"
+						ngbDatepicker
+						#dp="ngbDatepicker"
+                        [(ngModel)]=date
+                        required
+					/>
+                    <button type="button" 
+                    class="btn btn-secondary bi bi-calendar" 
+                    (click)="dp.toggle()"></button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-dark" 
+            [disabled]="updateForm.invalid"
+            (click)="updateCustomer(customer!)">Update</button>
+	</div>
+</ng-template>
+
+<ng-template #deleteModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" 
+            id="modal-basic-title">
+            Delete Customer
+        </h4>
+		<button type="button" 
+            class="btn-close" 
+            aria-label="Close" 
+            (click)="modal.dismiss()">
+        </button>
+	</div>
+	<div class="modal-body">
+        <div class="mb-3">
+        <p class="text-center">Are you sure you want to delete customer:
+            <br> <b>{{customer!.name}} </b> </p>
+        </div>
+        <hr>
+        <div class="mb-3">
+        <p class="text-center">To confirm enter customerID:
+            <br><b>{{customer!.customerID}}</b></p>
+        </div>
+        <hr>
+		<form #deleteForm="ngForm">
+            <div class="mb-3">
+                <label for="id">Customer ID</label>
+                <input 
+                    type="text"
+                    name="id"
+                    class="form-control"
+                    ngModel
+                    [pattern]="customer!.customerID.toString()"
+                    required
+                    >
+            </div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-danger" 
+            [disabled]="deleteForm.invalid"
+            (click)="deleteCustomer(customer!)">Delete</button>
+	</div>
+</ng-template>
+
+
